@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import weekdays from '../../data/weekday.json';
 import {BarChart, Bar, XAxis, YAxis, Cell, CartesianGrid, Tooltip, Legend} from 'recharts';
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText } from 'material-ui/Card';
 
 export default class WeekDayAccidents extends Component {
 
@@ -30,6 +31,10 @@ export default class WeekDayAccidents extends Component {
       }
 
       return(
+
+        <Card>
+        <CardTitle title="Total de acidentes por dias de semana"/>
+        <CardText style={{ 'text-align': 'center' }}>
         <BarChart width={900}
             height={260}
             data={data}>
@@ -51,6 +56,8 @@ export default class WeekDayAccidents extends Component {
 
         </Bar>
         </BarChart>
+        </CardText>
+        </Card>
       );
     }
 
