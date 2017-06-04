@@ -6,7 +6,6 @@ import registerServiceWorker from './registerServiceWorker';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import {yellow500} from 'material-ui/styles/colors';
 
 injectTapEventPlugin()
 

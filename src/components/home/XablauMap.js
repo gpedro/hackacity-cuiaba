@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
-import { Map, Marker, FeatureGroup, LayersControl, TileLayer } from 'react-leaflet';
-import MarkerClusterGroup from 'react-leaflet-markercluster';
+import { Map, FeatureGroup, LayersControl, TileLayer } from 'react-leaflet';
 import HeatmapLayer from 'react-leaflet-heatmap-layer';
 import DivIcon from 'react-leaflet-div-icon';
-import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText } from 'material-ui/Card';
-import Slider, { Range } from 'rc-slider';
+import Control from 'react-leaflet-control';
+import {Card, CardHeader } from 'material-ui/Card';
+import { Range } from 'rc-slider';
+import AppBar from 'material-ui/AppBar';
+import Drawer from 'material-ui/Drawer';
+import MenuItem from 'material-ui/MenuItem';
 import Loading from '../shared/Loading';
+import { getInfracoesPorTipoVeiculo } from './InfracoesService';
 import radares from '../../data/radares.json';
 import acidentes from '../../data/acidentes_mes_ano.json';
 import _ from 'lodash';
@@ -43,14 +47,28 @@ class XablauMap extends Component {
 
         this.state = {
             loading: true,
+            open: false,
             center: [-15.5989,-56.0949],
             zoom: 14,
-            heatmap: []
+            heatmap: [],
+            steps: [],
+            radarInfo: {},
         }
     }
 
-    markerClick(center) {
+    markerClick(radar) {
+        const center = [radar.latitude, radar.longitude]
         this.refs.map.leafletElement.setView(center)
+
+        // open drawer
+        this.setState({ open: true, radarInfo: {} })
+        const step = this.state.steps;
+        const inicio = steps[step[0]];
+        const fim = steps[step[1]];
+
+        getInfracoesPorTipoVeiculo(radar.nome, (inicio.month+"-"+inicio.year), (fim.month+"-"+fim.year)).then(response => {
+            this.setState({ radarInfo: response })
+        });
     }
 
     componentDidMount() {
@@ -61,6 +79,7 @@ class XablauMap extends Component {
     }
 
     onChange(event) {
+        this.setState({ steps: event })
         const min = steps[event[0]]
         const max = steps[event[1]]
         const heatmap = acidentesMesAno.filter(item => {
@@ -72,6 +91,8 @@ class XablauMap extends Component {
 
         this.setState({ heatmap: heatmap })
     }
+
+    handleClose = () => this.setState({open: false});
 
     render() {
         if (this.state.loading) {
@@ -101,14 +122,20 @@ class XablauMap extends Component {
                             intensityExtractor={m => m.value * 5}
                             gradient={gradientColors}/>
                         <LayersControl.Overlay checked name='Radares'>
-                            <FeatureGroup >{radares.map((radar, index) => {
+                            <FeatureGroup>
+                                {radares.map((radar, index) => {
                                 const position = [radar.latitude, radar.longitude]
-                                return <DivIcon position={position} iconAnchor={[-63, 0]}>
-                                    <img src={require('./images/fiscal_eletronic.png')} style={{ width: 24, position: 'relative', top: '-32px', right: '5px' }}/>
-                                </DivIcon>//<Marker key={index} position={position} onClick={() => this.markerClick(position)} />
-                            })}</FeatureGroup>
+                                return <DivIcon position={position} key={radar.nome}onClick={() => this.markerClick(radar)}>
+                                    <img src={require('./images/fiscal_eletronic.png')} alt={'icon xablau'} style={{ width: 24, position: 'relative', top: '-32px', right: '5px' }}/>
+                                </DivIcon>
+                                })}
+                            </FeatureGroup>
                         </LayersControl.Overlay>
                     </LayersControl>
+
+                    <Control position="bottomright">
+                        <div>XABLAU</div>
+                    </Control>
                 </Map>
                 <Card style={{ position: 'absolute', zIndex: 9000, bottom: 0, right:0, left: 0, marginRight: 15, marginLeft: 15 }}>
                     <CardHeader
@@ -119,6 +146,15 @@ class XablauMap extends Component {
                         <Range min={0} marks={stepLabels} defaultValue={[0, steps.length-1]} max={steps.length-1} step={1} onAfterChange={(event) => this.onChange(event)} />
                     </div>
                 </Card>
+
+                <Drawer openSecondary open={this.state.open} >
+                    <AppBar title={'Estatistícas'} onLeftIconButtonTouchTap={() => this.handleClose()} />
+                    <Card>
+                        <div>{Object.keys(this.state.radarInfo).map(item => {
+                            return <MenuItem primaryText={item} rightIcon={<strong style={{'font-size': 12, 'line-height': 24}}>{ (this.state.radarInfo[item] || 0 )}</strong>} />
+                        })}</div>
+                    </Card>
+                </Drawer>
             </div>
         )
     }
