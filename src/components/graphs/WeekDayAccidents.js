@@ -31,10 +31,10 @@ export default class WeekDayAccidents extends Component {
       }
 
       return(
-
-        <Card>
+        <center>
+        <Card style={{ 'width': '1000px' }}>
         <CardTitle title="Total de acidentes por dias de semana"/>
-        <CardText style={{ 'text-align': 'center' }}>
+        <CardText>
         <BarChart width={900}
             height={260}
             data={data}>
@@ -58,6 +58,7 @@ export default class WeekDayAccidents extends Component {
         </BarChart>
         </CardText>
         </Card>
+        </center>
       );
     }
 
