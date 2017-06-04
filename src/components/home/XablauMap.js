@@ -24,7 +24,7 @@ Object.keys(acidentes).forEach(key => {
     const position = JSON.parse(key);
     const month = _.padStart(('' + position[0]), 2, '0');
     const year = position[1];
-    const pair = month + ' - ' + year; 
+    const pair = month + ' - ' + year;
     steps[pair] = {
         month: month,
         year: year,
@@ -37,7 +37,7 @@ Object.keys(acidentes).forEach(key => {
 
 steps = _.sortBy(_.values(steps), ['year', 'month'])
 let stepLabels = steps.map(item => {
-    return item.month + "/" + (item.year + "").substr(2, 2); 
+    return item.month + "/" + (item.year + "").substr(2, 2);
 })
 
 class XablauMap extends Component {
@@ -141,7 +141,7 @@ class XablauMap extends Component {
                     <CardHeader
                         title="Filtros"
                         subtitle="Veja a serie histórica dos dados" />
-                    
+
                     <div style={{ marginRight: 20, marginLeft: 20, marginBottom: 40 }}>
                         <Range min={0} marks={stepLabels} defaultValue={[0, steps.length-1]} max={steps.length-1} step={1} onAfterChange={(event) => this.onChange(event)} />
                     </div>
