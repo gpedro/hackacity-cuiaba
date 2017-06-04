@@ -30,3 +30,28 @@ exports.getList = functions.https.onRequest((request, response) => {
                 response.json(results);
             });
 });
+
+function generateKey2(row){
+  return row['MES']+','+row['ANO']+','+row['TIPO_ACIDENTE']+','+row['SEXO']+','+row['lat']+','+row['lng'];
+}
+
+exports.getList2 = functions.https.onRequest((request, response) => {
+  const query = datastore
+            .createQuery(kind);
+        return datastore.runQuery(query)
+            .then(results => results[0])
+            .then(results => _.countBy(results, generateKey2))
+            .then(results => {
+                response.json(results);
+            });
+});
+
+exports.getWeekdayOccurrences = functions.https.onRequest((request, response) => {
+  const query = datastore.createQuery(kind);
+  return datastore.runQuery(query)
+      .then(results => results[0])
+      .then(results => _.countBy(results,'dia_semana'))
+      .then(results => {
+        response.json(results);
+      });
+});
