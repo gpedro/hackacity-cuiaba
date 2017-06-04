@@ -96,8 +96,8 @@ class XablauMap extends Component {
                         <LayersControl.Overlay checked name='Radares'>
                             <FeatureGroup >{radares.map((radar, index) => {
                                 const position = [radar.latitude, radar.longitude]
-                                return <DivIcon position={position}>
-                                    <img src={require('./images/fiscal_eletronic.png')} style={{ width: 24 }}/>
+                                return <DivIcon position={position} iconAnchor={[-63, 0]}>
+                                    <img src={require('./images/fiscal_eletronic.png')} style={{ width: 24, position: 'relative', top: '-32px', right: '5px' }}/>
                                 </DivIcon>//<Marker key={index} position={position} onClick={() => this.markerClick(position)} />
                             })}</FeatureGroup>
                         </LayersControl.Overlay>
