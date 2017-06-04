@@ -78,6 +78,12 @@ class XablauMap extends Component {
             return <Loading />
         }
 
+        const gradientColors = {
+            '0.5': 'blue',
+            '0.7': 'orange',
+            '1.0': 'red',
+        };
+
         return (
             <div className="fullscreenMap">
                 <Map ref="map" animate center={this.state.center} zoom={this.state.zoom} maxZoom={18} style={{ height: '100%' }}>
@@ -92,7 +98,8 @@ class XablauMap extends Component {
                             points={this.state.heatmap}
                             longitudeExtractor={m => m.position[3]}
                             latitudeExtractor={m => m.position[2]}
-                            intensityExtractor={m => m.value * 5} />
+                            intensityExtractor={m => m.value * 5}
+                            gradient={gradientColors}/>
                         <LayersControl.Overlay checked name='Radares'>
                             <FeatureGroup >{radares.map((radar, index) => {
                                 const position = [radar.latitude, radar.longitude]
